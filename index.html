@@ -561,7 +561,7 @@ let board=[],boardState='loading',localBest=+(store.get('gh-best')||0)||0;
 let myIds=[];try{myIds=JSON.parse(store.get('gh-ids')||'[]');}catch(e){myIds=[];}
 const sectName=s=>s==='dang'?'당문':'화산';
 const SB_ON=!!(SB_URL&&SB_KEY);
-const sbH=extra=>Object.assign({apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json'},extra||{});
+const sbH=extra=>Object.assign({apikey:SB_KEY,'Content-Type':'application/json'},SB_KEY.startsWith('eyJ')?{Authorization:'Bearer '+SB_KEY}:{},extra||{});
 async function sbFetch(path,opt){const r=await fetch(SB_URL.replace(/\/$/,'')+'/rest/v1/'+path,opt);if(!r.ok){const t=await r.text().catch(()=>'');throw new Error(r.status+' '+t);}return r;}
 function fillBoard(ol){ol.textContent='';const rows=board.slice(0,10);
   if(!rows.length){const li=document.createElement('li');li.className='empty';li.textContent=boardState==='ok'?'아직 기록이 없습니다. 첫 이름을 남겨 보세요.':boardState==='loading'?'불러오는 중…':'표시할 기록이 없습니다.';ol.append(li);return;}
