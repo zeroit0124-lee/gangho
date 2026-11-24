@@ -224,7 +224,7 @@ h1{margin:0;font:800 clamp(46px,8vw,78px)/1.05 "Nanum Myeongjo",serif;text-wrap:
 const $=s=>document.querySelector(s);
 const stage=$('#stage'),cv=$('#cv'),ctx=cv.getContext('2d');
 const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
-let W=800,H=600,DPR=1;
+let W=800,H=600,DPR=1,ZOOM=1,VW=800,VH=600;
 function resize(){DPR=Math.min(2,window.devicePixelRatio||1);W=stage.clientWidth||800;H=stage.clientHeight||600;cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);ctx.setTransform(DPR,0,0,DPR,0,0);ctx.imageSmoothingEnabled=false;}
 const stageRO=new ResizeObserver(resize);stageRO.observe(stage);resize();
 
@@ -277,9 +277,10 @@ const IT={
  lvup:{ch:'靈',name:'공청석유',lab:'LV UP',col:'#6fc3ff',w:10,desc:'즉시 레벨업'},
  atk:{ch:'力',name:'투신부',lab:'ATK UP',col:'#ff6070',w:13,desc:'15초간 공격력 +50%'},
  spd:{ch:'風',name:'경공비급',lab:'SPD UP',col:'#7be0b0',w:12,desc:'15초간 이동속도 +40%'},
- aspd:{ch:'速',name:'쾌공부',lab:'ATK SPD UP',col:'#c59bff',w:13,desc:'15초간 공격속도 +40%'}
+ aspd:{ch:'速',name:'쾌공부',lab:'ATK SPD UP',col:'#c59bff',w:13,desc:'15초간 공격속도 +40%'},
+ magnet:{ch:'吸',name:'흡성석',lab:'MAGNET',col:'#5ad1e6',w:10,desc:'맵의 모든 경험치 구슬을 끌어당김'}
 };
-const ICONDEF={"heal": {"rows": ["................", "......aaaa......", "......abba......", ".......aa.......", "......arra......", ".....arrrra.....", ".....arwrra.....", "......arra......", ".....arrrra.....", "....arrrrrra....", "....arwrrrra....", "....arrrrrra....", "....arrrrRra....", ".....aRRRRa.....", "......aaaa......", "................"], "pal": {"a": "#141b1b", "b": "#8a5a32", "r": "#e0414f", "R": "#a8283a", "w": "#ffd0d6"}}, "bomb": {"rows": ["................", "...........y....", "..........yoy...", "...........n....", "..........n.....", "......aaaan.....", "....aakkkkaa....", "...akkwkkkkka...", "..akkwwkkkkkka..", "..akwkkkkkkkka..", "..akkkkkkkkkka..", "..akkkkkkkkdda..", "...akkkkkkdda...", "....aakkkdaa....", "......aaaa......", "................"], "pal": {"a": "#141b1b", "k": "#3a3a48", "w": "#8a8aa0", "d": "#24242e", "y": "#ffe066", "o": "#ff8a3d", "n": "#8a5a32"}}, "maxhp": {"rows": ["................", "................", "......aaaa......", "....aayyyyaa....", "...ayYYyyyyya...", "..ayYyyrryyyya..", "..ayyyrrrryyya..", "..ayyyyrryyyya..", "..ayyyyyyyyyya..", "..addyyyyyydda..", "...adddyyddda...", "....aaddddaa....", "......aaaa......", "................", "................", "................"], "pal": {"a": "#141b1b", "y": "#f2c94a", "Y": "#fff2b0", "d": "#c08a2a", "r": "#c8323c"}}, "lvup": {"rows": ["................", "................", ".......aa.......", "......abba......", ".....abWbba.....", "....abWbbbba....", "...abWbbbbbba...", "...abWbbbbbba...", "...abbbbbbbda...", "...abbbbbbdda...", "...aabbbbddaa...", ".....aaddaa.....", ".....aaaaaa.....", "................", "................", "................"], "pal": {"a": "#141b1b", "b": "#6fc3ff", "W": "#ffffff", "d": "#3a7fd0"}}, "atk": {"rows": ["................", "....aaaaaaaa....", "....ayyyyyya....", "....ayrrrrya....", "....ayyrryya....", "....ayrrrrya....", "....ayyrryya....", "....ayrryrra....", "....ayyyyyya....", "....ayyrryya....", "....ayyrryya....", "....ayyyyyya....", "....aaaaaaaa....", ".......aa.......", ".......ar.......", "................"], "pal": {"a": "#141b1b", "y": "#f2d77a", "r": "#c8323c"}}, "spd": {"rows": ["................", "................", "..aaaaaaaaaaaa..", "..aGggggggggga..", "..aGgwwwwwwgga..", "..aGgwkkkkwgga..", "..aGgwwwwwwgga..", "..aGggggggggga..", "..aGgggJJgggga..", "..aGggJggJggga..", "..aGggggggggga..", "..awwwwwwwwwwa..", "..aaaaaaaaaaaa..", "................", "................", "................"], "pal": {"a": "#141b1b", "G": "#2f6346", "g": "#57b38a", "J": "#a6edc9", "w": "#efe6d8", "k": "#3a3a48"}}, "aspd": {"rows": ["................", "....aaaaaaaa....", "....appppppa....", "....appppvpa....", "....apppvvpa....", "....appvvppa....", "....apvvpppa....", "....appvvppa....", "....apppvvpa....", "....appppvpa....", "....appppppa....", "....appppppa....", "....aaaaaaaa....", ".......aa.......", ".......av.......", "................"], "pal": {"a": "#141b1b", "p": "#d4bff5", "v": "#5a2f86"}}};
+const ICONDEF={"magnet":{"rows": ["................", "................", "..aaaa....aaaa..", "..awwa....awwa..", "..awwa....awwa..", "..aaaa....aaaa..", "..arra....arra..", "..arra....arra..", "..arra....arra..", "..arraa..aarra..", "..arrraaaarrra..", "...arrrrrrrra...", "....aRRRRRRa....", ".....aaaaaa.....", "................", "................"], "pal": {"a": "#141b1b", "w": "#e6edf3", "r": "#e0414f", "R": "#a8283a"}},"heal": {"rows": ["................", "......aaaa......", "......abba......", ".......aa.......", "......arra......", ".....arrrra.....", ".....arwrra.....", "......arra......", ".....arrrra.....", "....arrrrrra....", "....arwrrrra....", "....arrrrrra....", "....arrrrRra....", ".....aRRRRa.....", "......aaaa......", "................"], "pal": {"a": "#141b1b", "b": "#8a5a32", "r": "#e0414f", "R": "#a8283a", "w": "#ffd0d6"}}, "bomb": {"rows": ["................", "...........y....", "..........yoy...", "...........n....", "..........n.....", "......aaaan.....", "....aakkkkaa....", "...akkwkkkkka...", "..akkwwkkkkkka..", "..akwkkkkkkkka..", "..akkkkkkkkkka..", "..akkkkkkkkdda..", "...akkkkkkdda...", "....aakkkdaa....", "......aaaa......", "................"], "pal": {"a": "#141b1b", "k": "#3a3a48", "w": "#8a8aa0", "d": "#24242e", "y": "#ffe066", "o": "#ff8a3d", "n": "#8a5a32"}}, "maxhp": {"rows": ["................", "................", "......aaaa......", "....aayyyyaa....", "...ayYYyyyyya...", "..ayYyyrryyyya..", "..ayyyrrrryyya..", "..ayyyyrryyyya..", "..ayyyyyyyyyya..", "..addyyyyyydda..", "...adddyyddda...", "....aaddddaa....", "......aaaa......", "................", "................", "................"], "pal": {"a": "#141b1b", "y": "#f2c94a", "Y": "#fff2b0", "d": "#c08a2a", "r": "#c8323c"}}, "lvup": {"rows": ["................", "................", ".......aa.......", "......abba......", ".....abWbba.....", "....abWbbbba....", "...abWbbbbbba...", "...abWbbbbbba...", "...abbbbbbbda...", "...abbbbbbdda...", "...aabbbbddaa...", ".....aaddaa.....", ".....aaaaaa.....", "................", "................", "................"], "pal": {"a": "#141b1b", "b": "#6fc3ff", "W": "#ffffff", "d": "#3a7fd0"}}, "atk": {"rows": ["................", "....aaaaaaaa....", "....ayyyyyya....", "....ayrrrrya....", "....ayyrryya....", "....ayrrrrya....", "....ayyrryya....", "....ayrryrra....", "....ayyyyyya....", "....ayyrryya....", "....ayyrryya....", "....ayyyyyya....", "....aaaaaaaa....", ".......aa.......", ".......ar.......", "................"], "pal": {"a": "#141b1b", "y": "#f2d77a", "r": "#c8323c"}}, "spd": {"rows": ["................", "................", "..aaaaaaaaaaaa..", "..aGggggggggga..", "..aGgwwwwwwgga..", "..aGgwkkkkwgga..", "..aGgwwwwwwgga..", "..aGggggggggga..", "..aGgggJJgggga..", "..aGggJggJggga..", "..aGggggggggga..", "..awwwwwwwwwwa..", "..aaaaaaaaaaaa..", "................", "................", "................"], "pal": {"a": "#141b1b", "G": "#2f6346", "g": "#57b38a", "J": "#a6edc9", "w": "#efe6d8", "k": "#3a3a48"}}, "aspd": {"rows": ["................", "....aaaaaaaa....", "....appppppa....", "....appppvpa....", "....apppvvpa....", "....appvvppa....", "....apvvpppa....", "....appvvppa....", "....apppvvpa....", "....appppvpa....", "....appppppa....", "....appppppa....", "....aaaaaaaa....", ".......aa.......", ".......av.......", "................"], "pal": {"a": "#141b1b", "p": "#d4bff5", "v": "#5a2f86"}}};
 const ICON={};for(const k in ICONDEF){const c=document.createElement('canvas');c.width=16;c.height=16;const g=c.getContext('2d');const d=ICONDEF[k];d.rows.forEach((r,y)=>{for(let x=0;x<16;x++){const ch=r[x];if(ch==='.')continue;g.fillStyle=d.pal[ch];g.fillRect(x,y,1,1);}});ICON[k]=c;}
 function badge(x,y,txt,col,sz){ctx.font='800 '+(sz||11)+'px "Noto Sans KR",sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';const w=ctx.measureText(txt).width+10,h=(sz||11)+6;ctx.fillStyle='rgba(12,10,14,.82)';ctx.fillRect((x-w/2)|0,(y-h/2)|0,w|0,h);ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.strokeRect(((x-w/2)|0)+.5,((y-h/2)|0)+.5,(w|0)-1,h-1);ctx.fillStyle=col;ctx.fillText(txt,x,y+.5);ctx.textBaseline='alphabetic';}
 {const ig=document.getElementById('itemGuide');if(ig)for(const k in IT){const d=IT[k],el=document.createElement('div');el.className='ig';const c=document.createElement('canvas');c.width=16;c.height=16;c.getContext('2d').drawImage(ICON[k],0,0);const b=document.createElement('b');b.textContent=d.name+' ';const lab=document.createElement('i');lab.textContent=d.lab;lab.style.color=d.col;const sm=document.createElement('small');sm.textContent=d.desc;const top=document.createElement('div');top.append(b,lab);el.append(c,top,sm);ig.append(el);}}
@@ -320,11 +321,11 @@ function query(x,y,r,out){out.length=0;r+=44;const x0=Math.floor((x-r)/CS),x1=Ma
 function nearest(maxR){let best=null,bd=maxR*maxR;for(const e of G.enemies){if(e.dead)continue;const dx=e.x-P.x,dy=e.y-P.y,d=dx*dx+dy*dy;if(d<bd){bd=d;best=e;}}return best;}
 
 /* ---------- 생성 ---------- */
-function edgePos(side){const m=60;switch(side){case 0:return[P.x+rand(-W/2,W/2),P.y-H/2-m];case 1:return[P.x+W/2+m,P.y+rand(-H/2,H/2)];case 2:return[P.x+rand(-W/2,W/2),P.y+H/2+m];default:return[P.x-W/2-m,P.y+rand(-H/2,H/2)];}}
+function edgePos(side){const m=60;switch(side){case 0:return[P.x+rand(-VW/2,VW/2),P.y-VH/2-m];case 1:return[P.x+VW/2+m,P.y+rand(-VH/2,VH/2)];case 2:return[P.x+rand(-VW/2,VW/2),P.y+VH/2+m];default:return[P.x-VW/2-m,P.y+rand(-VH/2,VH/2)];}}
 function pickType(n){const w=[['wolf',6],['bat',5]];if(n>=2)w.push(['bandit',Math.min(9,1+n)]);if(n>=4)w.push(['murim',Math.min(9,n-2)]);if(n>=8)w.push(['magyo',Math.min(10,n-6)]);let s=0;for(const x of w)s+=x[1];let r=Math.random()*s;for(const x of w){r-=x[1];if(r<=0)return x[0];}return 'wolf';}
 function spawnEnemy(t,side){const d=ET[t];const pos=edgePos(side===undefined?(G.spawnIdx++%4):side);const hm=1+G.t/60*0.35,sm=1+Math.min(0.5,G.t/600);const hp=d.hp*hm;
   const e={id:++G.eid,t,x:pos[0],y:pos[1],hp,mhp:hp,spd:d.spd*(d.boss||d.elite?1:sm),r:d.r,exp:d.exp,flash:0,kx:0,ky:0,ph:Math.random()*10,face:1,dead:false,st:0,dt:3,ax:0,ay:0};G.enemies.push(e);return e;}
-function startWave(){G.wave++;const n=G.wave;const c=n<=6?12+4*(n-1):n<=12?32+6*(n-6):Math.round(68+10*(n-12)+2.2*(n-12)*(n-12));G.spawnLeft+=c;G.spawnGap=Math.min(0.2,5/G.spawnLeft);G.spawnCd=0;G.waveT=10;if(n===1||n===13||n%10===0)banner('제 '+n+' 파','적 '+c+'명이 사방에서 몰려온다');}
+function startWave(){G.wave++;const n=G.wave;const c=n<=6?12+4*(n-1):n<=12?32+6*(n-6):Math.round(68+10*(n-12)+2.2*(n-12)*(n-12));G.spawnLeft+=c;G.spawnGap=Math.min(0.2,5/G.spawnLeft);G.spawnCd=0;G.waveT=10;if(n===10)banner('제 10 파','강호가 넓어진다 · 시야가 점점 넓어집니다');else if(n===1||n===13||n%10===0)banner('제 '+n+' 파','적 '+c+'명이 사방에서 몰려온다');}
 function spawnSpecial(t){const e=spawnEnemy(t,(Math.random()*4)|0);if(t==='boss'){G.boss=e;banner('혈마 출현','오래 버틴 자에게 마두가 찾아왔다');G.shake=12;}else banner('흑풍귀 출현','빠르고 질긴 자객을 조심하라');}
 
 /* ---------- 전투 ---------- */
@@ -350,7 +351,7 @@ function kill(e){if(e.dead)return;e.dead=true;G.kills++;const d=ET[e.t];if(!G.ul
   
 }
 function dropGem(x,y,v){if(G.gems.length>=MAXG){const g=G.gems[(Math.random()*G.gems.length)|0];g.v+=v;return;}G.gems.push({x,y,v,mag:false});}
-function spawnItemNear(){if(G.items.length>=4)return;const a=Math.random()*6.283,d=rand(260,520);dropItem(P.x+Math.cos(a)*d,P.y+Math.sin(a)*d);const it=G.items[G.items.length-1],dd=IT[it.k];text(P.x,P.y-44,dd.name+'('+dd.lab+') 출현!',dd.col,1.4);}
+function spawnItemNear(){if(G.items.length>=4)return;const a=Math.random()*6.283,d=rand(260,520)/ZOOM;dropItem(P.x+Math.cos(a)*d,P.y+Math.sin(a)*d);const it=G.items[G.items.length-1],dd=IT[it.k];text(P.x,P.y-44,dd.name+'('+dd.lab+') 출현!',dd.col,1.4);}
 function dropItem(x,y){let s=0;for(const k in IT)s+=IT[k].w;let r=Math.random()*s,key='heal';for(const k in IT){r-=IT[k].w;if(r<=0){key=k;break;}}if(G.items.length>=8)G.items.shift();G.items.push({x,y,k:key,ph:Math.random()*6,life:30});}
 function gainExp(v){P.exp+=v;while(P.exp>=P.next){P.exp-=P.next;P.lv++;P.next=need(P.lv);G.pendingLv++;}if(G.pendingLv>0&&state==='play')openLevelUp();}
 function applyItem(it){const d=IT[it.k];text(P.x,P.y-40,d.lab+'!',d.col,1.3,22);text(P.x,P.y-20,d.name,'#ffffff',1.1);ring(P.x,P.y,10,70,0.4,d.col);
@@ -359,6 +360,7 @@ function applyItem(it){const d=IT[it.k];text(P.x,P.y-40,d.lab+'!',d.col,1.3,22);
    case 'maxhp':P.maxHp=Math.min(12,P.maxHp+1);P.hp=Math.min(P.maxHp,P.hp+1);break;
    case 'lvup':gainExp(Math.max(1,P.next-P.exp));break;
    case 'bomb':{query(P.x,P.y,280,tmp);const hit=tmp.slice();for(const e of hit){if(e.dead||Math.hypot(e.x-P.x,e.y-P.y)>280+e.r)continue;if(ET[e.t].boss)damage(e,e.mhp*0.15,e.x-P.x,e.y-P.y,0,true);else kill(e);}ring(P.x,P.y,20,290,0.6,'#ff8a3d');ring(P.x,P.y,10,200,0.45,'#ffe0a0');if(!RM)G.shake=12;break;}
+   case 'magnet':for(const g of G.gems){g.mag=true;g.fast=true;}ring(P.x,P.y,10,320,0.6,'#5ad1e6');break;
    default:G.buffs[it.k]=15;}
 }
 function hurt(d){P.hp-=d;P.inv=1.5;G.hurt=0.35;if(!RM)G.shake=Math.max(G.shake,8);query(P.x,P.y,100,tmp);for(const e of tmp){const dx=e.x-P.x,dy=e.y-P.y,l=Math.hypot(dx,dy)||1;if(l<100){const res=ET[e.t].boss?0.1:1;e.kx+=dx/l*220*res;e.ky+=dy/l*220*res;}}
@@ -397,7 +399,7 @@ function update(dt,rdt){
   if(P.moving){P.dx=mx/ml;P.dy=my/ml;P.anim+=dt;if(Math.abs(mx)>0.15)P.face=mx<0?-1:1;}
   P.inv=Math.max(0,P.inv-dt);P.atkT=Math.max(0,(P.atkT||0)-dt);
   // 적 이동
-  const farX=W*0.9+220,farY=H*0.9+220;
+  const farX=VW*0.9+220,farY=VH*0.9+220;
   for(const e of G.enemies){if(e.dead)continue;const d=ET[e.t];let dx=P.x-e.x,dy=P.y-e.y;
     if(Math.abs(dx)>farX||Math.abs(dy)>farY){const side=Math.abs(P.dx)>Math.abs(P.dy)?(P.dx>0?1:3):(P.dy>0?2:0);const p=edgePos(side);e.x=p[0];e.y=p[1];dx=P.x-e.x;dy=P.y-e.y;}
     const l=Math.hypot(dx,dy)||1;let vx=dx/l*e.spd,vy=dy/l*e.spd;
@@ -418,7 +420,7 @@ function update(dt,rdt){
   // 접촉 피해
   if(P.inv<=0&&P.dashT<-0.1&&state==='play'){query(P.x,P.y,P.r+50,tmp);for(const e of tmp){if(e.dead)continue;const dx=e.x-P.x,dy=e.y-P.y,rr=e.r*0.8+P.r;if(dx*dx+dy*dy<rr*rr){hurt(ET[e.t].dmg);break;}}}
   // 경험치 구슬
-  j=0;for(const g of G.gems){const dx=P.x-g.x,dy=P.y-g.y,d=Math.hypot(dx,dy)||1;if(d<60)g.mag=true;if(g.mag){const s=Math.max(380,600-d);g.x+=dx/d*s*dt;g.y+=dy/d*s*dt;}
+  j=0;for(const g of G.gems){const dx=P.x-g.x,dy=P.y-g.y,d=Math.hypot(dx,dy)||1;if(d<60)g.mag=true;if(g.mag){const s=g.fast?950:Math.max(380,600-d);g.x+=dx/d*s*dt;g.y+=dy/d*s*dt;}
     if(d<P.r+8){gainExp(g.v);continue;}G.gems[j++]=g;}G.gems.length=j;
   // 아이템
   G.itemT-=rdt;if(G.itemT<=0){G.itemT=rand(15,22);spawnItemNear();}
@@ -446,12 +448,13 @@ function drawSlash(s,p){const cx=P.x,cy=P.y;
     if(p<0.55){const hx=cx+Math.cos(head)*(r+4),hy=cy+Math.sin(head)*(r+4);ctx.globalAlpha=1;ctx.fillStyle='#ffffff';ctx.fillRect((hx-1)|0,(hy-4)|0,2,8);ctx.fillRect((hx-4)|0,(hy-1)|0,8,2);}}
   ctx.globalAlpha=1;}
 function render(){
-  ctx.setTransform(DPR,0,0,DPR,0,0);ctx.imageSmoothingEnabled=false;
+  const zt=G.wave>=10?Math.max(0.7,1-(G.wave-9)*0.03):1;ZOOM+=(zt-ZOOM)*0.03;if(Math.abs(zt-ZOOM)<0.001)ZOOM=zt;VW=W/ZOOM;VH=H/ZOOM;const DZ=DPR*ZOOM;
+  ctx.setTransform(DZ,0,0,DZ,0,0);ctx.imageSmoothingEnabled=false;
   const sx=G.shake?(Math.random()-0.5)*G.shake:0,sy=G.shake?(Math.random()-0.5)*G.shake:0;
-  const cx=Math.round(P.x-W/2+sx),cy=Math.round(P.y-H/2+sy),T=GROUND.T;
-  ctx.save();ctx.translate(-(((cx%T)+T)%T),-(((cy%T)+T)%T));ctx.fillStyle=GROUND.pat||'#56702f';ctx.fillRect(0,0,W+T,H+T);ctx.restore();
-  ctx.setTransform(DPR,0,0,DPR,-cx*DPR,-cy*DPR);
-  const x0=cx-90,x1=cx+W+90,y0=cy-90,y1=cy+H+90,vis=(x,y)=>x>x0&&x<x1&&y>y0&&y<y1;
+  const cx=Math.round(P.x-VW/2+sx),cy=Math.round(P.y-VH/2+sy),T=GROUND.T;
+  ctx.save();ctx.translate(-(((cx%T)+T)%T),-(((cy%T)+T)%T));ctx.fillStyle=GROUND.pat||'#56702f';ctx.fillRect(0,0,VW+T,VH+T);ctx.restore();
+  ctx.setTransform(DZ,0,0,DZ,-cx*DZ,-cy*DZ);
+  const x0=cx-90,x1=cx+VW+90,y0=cy-90,y1=cy+VH+90,vis=(x,y)=>x>x0&&x<x1&&y>y0&&y<y1;
   for(const g of G.gems)if(vis(g.x,g.y))ctx.drawImage(GEM[g.v>=10?2:g.v>=2?1:0].n,(g.x-5)|0,(g.y-5)|0);
   ctx.textAlign='center';ctx.textBaseline='middle';
   for(const it of G.items){if(!vis(it.x,it.y)||(it.life<5&&((G.t*7)|0)%2))continue;const d=IT[it.k],y=it.y+Math.sin(G.t*4+it.ph)*3;
@@ -471,7 +474,7 @@ function render(){
     if(d.elite){ctx.fillStyle='#000';ctx.fillRect(e.x-20,e.y-S.h/2-9,40,5);ctx.fillStyle='#e0414f';ctx.fillRect(e.x-20,e.y-S.h/2-9,40*Math.max(0,e.hp/e.mhp),5);}}
   if(!playerDrawn)drawPlayer();
   for(const p of G.proj){if(!vis(p.x,p.y))continue;ctx.strokeStyle='rgba(200,215,240,.35)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(p.x-p.vx*0.05,p.y-p.vy*0.05);ctx.lineTo(p.x,p.y);ctx.stroke();
-    const c=Math.cos(p.a)*DPR,s=Math.sin(p.a)*DPR;ctx.setTransform(c,s,-s,c,(p.x-cx)*DPR,(p.y-cy)*DPR);ctx.drawImage(DART,-18,-5);ctx.setTransform(DPR,0,0,DPR,-cx*DPR,-cy*DPR);}
+    const c=Math.cos(p.a)*DZ,s=Math.sin(p.a)*DZ;ctx.setTransform(c,s,-s,c,(p.x-cx)*DZ,(p.y-cy)*DZ);ctx.drawImage(DART,-18,-5);ctx.setTransform(DZ,0,0,DZ,-cx*DZ,-cy*DZ);}
   ctx.lineCap='round';
   for(const s of G.slashes){const p=1-s.life/s.max;drawSlash(s,p);}
   for(const r of G.rings){const k=r.life/r.max;ctx.globalAlpha=k;ctx.strokeStyle=r.col;ctx.lineWidth=10*k+2;ctx.beginPath();ctx.arc(r.x,r.y,r.r1-(r.r1-r.r0)*k,0,6.283);ctx.stroke();}
@@ -481,7 +484,7 @@ function render(){
   for(const t of G.texts){const a=t.life/t.max,pop=a>0.75?1+(a-0.75)*2.4:1;ctx.font='800 '+Math.round(t.sz*pop)+'px "Noto Sans KR",sans-serif';ctx.globalAlpha=Math.min(1,a*2.2);ctx.strokeText(t.s,t.x,t.y);ctx.fillStyle=t.col;ctx.fillText(t.s,t.x,t.y);}
   ctx.globalAlpha=1;ctx.setTransform(DPR,0,0,DPR,0,0);
   // 화면 밖 아이템 위치 표시
-  for(const it of G.items){const sx=it.x-cx,sy=it.y-cy;if(sx>-10&&sx<W+10&&sy>-10&&sy<H+10)continue;if(it.life<5&&((G.t*7)|0)%2)continue;
+  for(const it of G.items){const sx=(it.x-cx)*ZOOM,sy=(it.y-cy)*ZOOM;if(sx>-10&&sx<W+10&&sy>-10&&sy<H+10)continue;if(it.life<5&&((G.t*7)|0)%2)continue;
     const d=IT[it.k],mx=W/2,my=H/2,dx=sx-mx,dy=sy-my,m=40,top=74;const tx=(dx>0?(W-m-mx):(m-mx))/(dx||1e-6),ty=(dy>0?(H-m-my):(top-my))/(dy||1e-6),t=Math.min(Math.abs(tx),Math.abs(ty));
     const ix=mx+dx*t,iy=my+dy*t,ang=Math.atan2(dy,dx),pul=1+0.08*Math.sin(G.t*6);
     ctx.fillStyle=d.col;ctx.beginPath();ctx.moveTo(ix+Math.cos(ang)*26,iy+Math.sin(ang)*26);ctx.lineTo(ix+Math.cos(ang+0.5)*17,iy+Math.sin(ang+0.5)*17);ctx.lineTo(ix+Math.cos(ang-0.5)*17,iy+Math.sin(ang-0.5)*17);ctx.closePath();ctx.fill();
