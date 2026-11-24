@@ -555,8 +555,8 @@ function showOver(){state='over';$('#hud').classList.remove('on');$('#bossbar').
 
 /* ---------- 랭킹 (Supabase) ---------- */
 // ▼ Supabase 프로젝트 설정값 두 개를 여기에 붙여넣으세요 (Project Settings > API)
-const SB_URL='';   // 예: https://abcdefgh.supabase.co
-const SB_KEY='';   // anon public 키 (eyJ... 로 시작)
+const SB_URL='https://ancceapiqayvnjvtmaug.supabase.co';   // 예: https://abcdefgh.supabase.co
+const SB_KEY='sb_publishable_HDDqX9jRidc9-f5HmUEErg_4ujx1N3L';   // anon public 키 (eyJ... 로 시작)
 let board=[],boardState='loading',localBest=+(store.get('gh-best')||0)||0;
 let myIds=[];try{myIds=JSON.parse(store.get('gh-ids')||'[]');}catch(e){myIds=[];}
 const sectName=s=>s==='dang'?'당문':'화산';

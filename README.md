@@ -10,13 +10,14 @@
 - 필살기: E 또는 경공 위 버튼 (기 게이지가 가득 차면)
 - 일시정지: Esc
 
-## 랭킹 서버 연결 (선택)
-랭킹은 Supabase에 저장됩니다. `index.html`에서 아래 두 줄의 따옴표 안에
-Supabase 프로젝트 값을 넣으면 공용 랭킹이 켜집니다. 비워 두면 각 기기에만 최고 점수가 저장됩니다.
+## 랭킹
+랭킹은 Supabase(`runs` 테이블)에 저장됩니다. 누구나 조회·등록만 가능하고 수정·삭제는 불가하며,
+점수 공식에 맞지 않거나 생존 시간에 비해 비정상적인 기록은 데이터베이스가 거부합니다.
+아래 값은 공개용(publishable) 키라 페이지에 포함되어도 안전합니다.
 
 ```js
-const SB_URL='';   // Project URL
-const SB_KEY='';   // anon public 키
+const SB_URL='https://ancceapiqayvnjvtmaug.supabase.co';
+const SB_KEY='sb_publishable_…';   // 공개용 키
 ```
 
 ## 크레딧
