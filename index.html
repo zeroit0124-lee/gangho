@@ -418,7 +418,7 @@ function update(dt,rdt){
   // 접촉 피해
   if(P.inv<=0&&P.dashT<-0.1&&state==='play'){query(P.x,P.y,P.r+50,tmp);for(const e of tmp){if(e.dead)continue;const dx=e.x-P.x,dy=e.y-P.y,rr=e.r*0.8+P.r;if(dx*dx+dy*dy<rr*rr){hurt(ET[e.t].dmg);break;}}}
   // 경험치 구슬
-  j=0;for(const g of G.gems){const dx=P.x-g.x,dy=P.y-g.y,d=Math.hypot(dx,dy)||1;if(d<140)g.mag=true;if(g.mag){const s=Math.max(380,600-d);g.x+=dx/d*s*dt;g.y+=dy/d*s*dt;}
+  j=0;for(const g of G.gems){const dx=P.x-g.x,dy=P.y-g.y,d=Math.hypot(dx,dy)||1;if(d<60)g.mag=true;if(g.mag){const s=Math.max(380,600-d);g.x+=dx/d*s*dt;g.y+=dy/d*s*dt;}
     if(d<P.r+8){gainExp(g.v);continue;}G.gems[j++]=g;}G.gems.length=j;
   // 아이템
   G.itemT-=rdt;if(G.itemT<=0){G.itemT=rand(15,22);spawnItemNear();}
