@@ -523,21 +523,21 @@ const DASHCD=3;
 function dash(){if(state!=='play'||P.dashCd>0)return;P.dashCd=DASHCD;P.dashT=0.18;P.dvx=P.dx;P.dvy=P.dy;G.gt=0;for(let i=0;i<12;i++){const a=Math.random()*6.283;part(P.x,P.y+14,Math.cos(a)*rand(20,80),Math.sin(a)*rand(10,40),rand(.25,.5),'#cfd8c8',3);}hudT=0;}
 
 /* ---------- 필살기 ---------- */
-const ULTN={hwasan:['매화난무','梅花亂舞 · 주변을 매화 검기로 휩쓴다'],dang:['만천화우','滿天花雨 · 하늘 가득 비도를 흩뿌린다']};
+const ULTN={hwasan:['매화난무','梅花亂舞 · 주변을 매화 검기로 휩쓴다'],dang:['만천화우','滿天花雨 · 비도의 폭우를 일직선으로 쏟아낸다']};
 function ultimate(){if(state!=='play'||G.ult<100)return;G.ult=0;G.ultCool=10;const n=ULTN[P.sect];banner(n[0],n[1]);G.ultFx=0.7;P.inv=Math.max(P.inv,0.6);hudT=0;
   if(!RM)G.shake=10;ring(P.x,P.y,10,260,0.6,P.sect==='dang'?'#c59bff':'#f08ca0');
-  if(P.sect==='hwasan')G.ultH={t:1.75,tick:0};else G.ultD={n:4,tick:0,rot:Math.random()*6};}
+  if(P.sect==='hwasan')G.ultH={t:1.75,tick:0};else {const tg=nearest(500);G.ultD={n:6,tick:0,ang:tg?Math.atan2(tg.y-P.y,tg.x-P.x):Math.atan2(P.dy,P.dx)};}}
 function updateUlt(dt,rdt){
   if(!G.ultH&&!G.ultD){if(G.ultCool>0)G.ultCool-=rdt;else G.ult=Math.min(100,G.ult+rdt*1.2);}
-  if(G.ultH){const u=G.ultH;u.t-=dt;u.tick-=dt;P.inv=Math.max(P.inv,0.2);const R=200;
+  if(G.ultH){const u=G.ultH;u.t-=dt;u.tick-=dt;P.inv=Math.max(P.inv,0.2);const R=150;
     if(u.tick<=0){u.tick=0.25;query(P.x,P.y,R,tmp);const hit=tmp.slice();for(const e of hit){if(e.dead||Math.hypot(e.x-P.x,e.y-P.y)>R+e.r)continue;damage(e,42*atkMul(),e.x-P.x,e.y-P.y,160,false,true,true);}
       for(let i=0;i<3;i++)G.slashes.push({ang:Math.random()*6.283,r:rand(90,R),fin:false,life:0.3,max:0.3,dir:Math.random()<.5?1:-1});
       for(let i=0;i<26;i++){const a=Math.random()*6.283,rr=Math.random()*R;part(P.x+Math.cos(a)*rr,P.y+Math.sin(a)*rr-30,rand(-30,30),rand(20,70),rand(.6,1.1),Math.random()<.7?'#f39ab0':'#ffe1e8',3);}}
     if(u.t<=0){G.ultH=null;query(P.x,P.y,R+40,tmp);const hit=tmp.slice();for(const e of hit){if(e.dead||Math.hypot(e.x-P.x,e.y-P.y)>R+40+e.r)continue;damage(e,130*atkMul(),e.x-P.x,e.y-P.y,900,true,true);}
       G.slashes.push({ang:0,r:R*0.9,fin:true,life:0.5,max:0.5,dir:1});ring(P.x,P.y,20,R+60,0.5,'#ffffff');if(!RM){G.shake=12;G.hitstop=0.1;}}}
   if(G.ultD){const u=G.ultD;u.tick-=dt;P.inv=Math.max(P.inv,0.2);
-    if(u.tick<=0){u.tick=0.16;u.n--;u.rot+=0.14;const N=16;for(let i=0;i<N;i++){const a=u.rot+i/N*6.283;G.proj.push({x:P.x,y:P.y,vx:Math.cos(a)*420,vy:Math.sin(a)*420,a,life:1.1,pierce:3,bounce:0,hits:[],m:2.2});}
-      for(let i=0;i<10;i++)part(P.x,P.y-6,rand(-120,120),rand(-120,120),0.3,i%2?'#ffffff':'#c59bff',2);if(!RM)G.shake=Math.max(G.shake,3);
+    if(u.tick<=0){u.tick=0.1;u.n--;const a=u.ang,ca=Math.cos(a),sa=Math.sin(a);for(let i=-3;i<=3;i++){const o=i*13+rand(-3,3);G.proj.push({x:P.x-sa*o,y:P.y+ca*o,vx:ca*540,vy:sa*540,a,life:0.85,pierce:5,bounce:0,hits:[],m:2.2});}
+      for(let i=0;i<10;i++)part(P.x+Math.cos(u.ang)*14,P.y+Math.sin(u.ang)*14-4,Math.cos(u.ang)*rand(60,220)+rand(-40,40),Math.sin(u.ang)*rand(60,220)+rand(-40,40),0.3,i%2?'#ffffff':'#c59bff',2);if(!RM)G.shake=Math.max(G.shake,3);
       if(u.n<=0)G.ultD=null;}}
 }
 function togglePause(){if(state==='play'){state='pause';show('#pause',true);$('#resumeBtn').focus();}else if(state==='pause'){state='play';show('#pause',false);}}
