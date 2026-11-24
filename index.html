@@ -523,10 +523,10 @@ const DASHCD=3;
 function dash(){if(state!=='play'||P.dashCd>0)return;P.dashCd=DASHCD;P.dashT=0.18;P.dvx=P.dx;P.dvy=P.dy;G.gt=0;for(let i=0;i<12;i++){const a=Math.random()*6.283;part(P.x,P.y+14,Math.cos(a)*rand(20,80),Math.sin(a)*rand(10,40),rand(.25,.5),'#cfd8c8',3);}hudT=0;}
 
 /* ---------- 필살기 ---------- */
-const ULTN={hwasan:['매화난무','梅花亂舞 · 주변을 매화 검기로 휩쓴다'],dang:['만천화우','滿天花雨 · 비도의 폭우를 일직선으로 쏟아낸다']};
+const ULTN={hwasan:['매화난무','梅花亂舞 · 주변을 매화 검기로 휩쓴다'],dang:['만천화우','滿天花雨 · 바라보는 방향으로 비도를 쏟아붓는다']};
 function ultimate(){if(state!=='play'||G.ult<100)return;G.ult=0;G.ultCool=10;const n=ULTN[P.sect];banner(n[0],n[1]);G.ultFx=0.7;P.inv=Math.max(P.inv,0.6);hudT=0;
   if(!RM)G.shake=10;ring(P.x,P.y,10,260,0.6,P.sect==='dang'?'#c59bff':'#f08ca0');
-  if(P.sect==='hwasan')G.ultH={t:1.75,tick:0};else {const tg=nearest(500);G.ultD={n:6,tick:0,ang:tg?Math.atan2(tg.y-P.y,tg.x-P.x):Math.atan2(P.dy,P.dx)};}}
+  if(P.sect==='hwasan')G.ultH={t:1.75,tick:0};else G.ultD={n:12,tick:0,ang:Math.atan2(P.dy,P.dx)};}
 function updateUlt(dt,rdt){
   if(!G.ultH&&!G.ultD){if(G.ultCool>0)G.ultCool-=rdt;else G.ult=Math.min(100,G.ult+rdt*1.2);}
   if(G.ultH){const u=G.ultH;u.t-=dt;u.tick-=dt;P.inv=Math.max(P.inv,0.2);const R=150;
@@ -536,7 +536,7 @@ function updateUlt(dt,rdt){
     if(u.t<=0){G.ultH=null;query(P.x,P.y,R+40,tmp);const hit=tmp.slice();for(const e of hit){if(e.dead||Math.hypot(e.x-P.x,e.y-P.y)>R+40+e.r)continue;damage(e,130*atkMul(),e.x-P.x,e.y-P.y,900,true,true);}
       G.slashes.push({ang:0,r:R*0.9,fin:true,life:0.5,max:0.5,dir:1});ring(P.x,P.y,20,R+60,0.5,'#ffffff');if(!RM){G.shake=12;G.hitstop=0.1;}}}
   if(G.ultD){const u=G.ultD;u.tick-=dt;P.inv=Math.max(P.inv,0.2);
-    if(u.tick<=0){u.tick=0.1;u.n--;const a=u.ang,ca=Math.cos(a),sa=Math.sin(a);for(let i=-3;i<=3;i++){const o=i*13+rand(-3,3);G.proj.push({x:P.x-sa*o,y:P.y+ca*o,vx:ca*540,vy:sa*540,a,life:0.85,pierce:5,bounce:0,hits:[],m:2.2});}
+    if(u.tick<=0){u.tick=0.09;u.n--;const tgt=Math.atan2(P.dy,P.dx);let df=tgt-u.ang;df=Math.atan2(Math.sin(df),Math.cos(df));u.ang+=df*0.5;const ca=Math.cos(u.ang),sa=Math.sin(u.ang);for(let i=-3;i<=3;i++){const o=i*12+rand(-3,3),a=u.ang+i*0.035+rand(-0.02,0.02);G.proj.push({x:P.x-sa*o,y:P.y+ca*o,vx:Math.cos(a)*540,vy:Math.sin(a)*540,a,life:0.85,pierce:5,bounce:0,hits:[],m:1.8});}
       for(let i=0;i<10;i++)part(P.x+Math.cos(u.ang)*14,P.y+Math.sin(u.ang)*14-4,Math.cos(u.ang)*rand(60,220)+rand(-40,40),Math.sin(u.ang)*rand(60,220)+rand(-40,40),0.3,i%2?'#ffffff':'#c59bff',2);if(!RM)G.shake=Math.max(G.shake,3);
       if(u.n<=0)G.ultD=null;}}
 }
